@@ -27,4 +27,10 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
-            README.md 
+            README.md
+            .github/**
+          include: |
+            *.html
+            *.php
+            *.js
+            *.css 
