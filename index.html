@@ -12,10 +12,6 @@
             padding: 20px;
             text-align: center;
         }
-        .room-info {
-            margin: 20px 0;
-            font-size: 24px;
-        }
         .vote-buttons {
             display: flex;
             flex-direction: column;
@@ -35,11 +31,6 @@
         button:hover {
             background: #eee;
         }
-        .waiting-text {
-            color: #666;
-            margin-top: 20px;
-            font-size: 14px;
-        }
         .results {
             display: none;
             margin-top: 30px;
@@ -50,20 +41,23 @@
         .results.show {
             display: block;
         }
+        #viewResultsBtn {
+            margin-top: 20px;
+            background-color: #4a90e2;
+            color: white;
+        }
+        #viewResultsBtn:hover {
+            background-color: #357abd;
+        }
     </style>
 </head>
 <body>
-    <div class="room-info">
-        <div>合言葉の部屋</div>
-        <div>4人</div>
-    </div>
-
     <div id="voteSection">
         <div class="vote-buttons">
             <button onclick="vote('yes')">YES</button>
             <button onclick="vote('no')">NO</button>
         </div>
-        <div class="waiting-text">皆の回答が終わるのをお待ちください</div>
+        <button id="viewResultsBtn" onclick="showResults()">結果を見る</button>
     </div>
 
     <div id="resultsSection" class="results">
