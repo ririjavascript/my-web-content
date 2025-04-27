@@ -4,49 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>投票システム</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .room-info {
+            margin: 20px 0;
+            font-size: 24px;
+        }
+        .vote-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 30px auto;
+            max-width: 300px;
+        }
+        button {
+            padding: 15px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: #f8f8f8;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background: #eee;
+        }
+        .waiting-text {
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .results {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .results.show {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <h1>Modern Design</h1>
-            <nav>
-                <a href="#" class="button" id="getStartedBtn">Get Started <span class="click-count">(0 clicks)</span></a>
-            </nav>
+    <div class="room-info">
+        <div>合言葉の部屋</div>
+        <div>4人</div>
+    </div>
+
+    <div id="voteSection">
+        <div class="vote-buttons">
+            <button onclick="vote('yes')">YES</button>
+            <button onclick="vote('no')">NO</button>
         </div>
-    </header>
+        <div class="waiting-text">皆の回答が終わるのをお待ちください</div>
+    </div>
 
-    <main>
-        <div class="container">
-            <section>
-                <h2>Welcome to Our Modern Website</h2>
-                <p>Experience the power of modern web design with our carefully crafted user interface. We combine aesthetics with functionality to create an engaging user experience.</p>
-                <a href="#" class="button" id="learnMoreBtn">Learn More <span class="click-count">(0 clicks)</span></a>
-            </section>
+    <div id="resultsSection" class="results">
+        <h2>投票結果</h2>
+        <div>YES: <span id="yesCount">0</span>票</div>
+        <div>NO: <span id="noCount">0</span>票</div>
+    </div>
 
-            <section>
-                <h2>Features</h2>
-                <p>Discover our amazing features that make this website stand out:</p>
-                <ul>
-                    <li>Modern and clean design</li>
-                    <li>Responsive layout</li>
-                    <li>Smooth animations</li>
-                    <li>User-friendly interface</li>
-                </ul>
-            </section>
-        </div>
-    </main>
+    <script>
+        function vote(choice) {
+            fetch('vote.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ vote: choice })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('yesCount').textContent = data.yes;
+                document.getElementById('noCount').textContent = data.no;
+                showResults();
+            })
+            .catch(error => console.error('Error:', error));
+        }
 
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2024 Modern Web Content. All rights reserved.</p>
-            <p>Last updated: 2024/03/21</p>
-        </div>
-    </footer>
+        function showResults() {
+            document.getElementById('voteSection').style.display = 'none';
+            document.getElementById('resultsSection').classList.add('show');
+        }
 
-    <script src="script.js"></script>
+        // 初期表示時に現在の投票数を取得
+        fetch('vote.php')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('yesCount').textContent = data.yes;
+                document.getElementById('noCount').textContent = data.no;
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
 </body>
 </html> 
