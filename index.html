@@ -26,10 +26,11 @@
             border-radius: 8px;
             background: #f8f8f8;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
         button:hover {
             background: #eee;
+            transform: translateY(-2px);
         }
         .results {
             display: none;
@@ -49,6 +50,38 @@
         #viewResultsBtn:hover {
             background-color: #357abd;
         }
+        .result-bar {
+            margin: 20px 0;
+            text-align: left;
+        }
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .bar-container {
+            width: 100%;
+            height: 24px;
+            background-color: #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .bar {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        .yes-bar {
+            background-color: #4CAF50;
+        }
+        .no-bar {
+            background-color: #f44336;
+        }
+        .total-votes {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -62,11 +95,55 @@
 
     <div id="resultsSection" class="results">
         <h2>投票結果</h2>
-        <div>YES: <span id="yesCount">0</span>票</div>
-        <div>NO: <span id="noCount">0</span>票</div>
+        
+        <div class="result-bar">
+            <div class="bar-label">
+                <span>YES</span>
+                <span id="yesPercent">0%</span>
+            </div>
+            <div class="bar-container">
+                <div id="yesBar" class="bar yes-bar" style="width: 0%"></div>
+            </div>
+            <div style="text-align: right; margin-top: 5px;">
+                <span id="yesCount">0</span>票
+            </div>
+        </div>
+
+        <div class="result-bar">
+            <div class="bar-label">
+                <span>NO</span>
+                <span id="noPercent">0%</span>
+            </div>
+            <div class="bar-container">
+                <div id="noBar" class="bar no-bar" style="width: 0%"></div>
+            </div>
+            <div style="text-align: right; margin-top: 5px;">
+                <span id="noCount">0</span>票
+            </div>
+        </div>
+
+        <div class="total-votes">
+            総投票数: <span id="totalVotes">0</span>票
+        </div>
     </div>
 
     <script>
+        function updateResults(data) {
+            const total = data.yes + data.no;
+            const yesPercent = total > 0 ? Math.round((data.yes / total) * 100) : 0;
+            const noPercent = total > 0 ? Math.round((data.no / total) * 100) : 0;
+
+            document.getElementById('yesCount').textContent = data.yes;
+            document.getElementById('noCount').textContent = data.no;
+            document.getElementById('totalVotes').textContent = total;
+            
+            document.getElementById('yesPercent').textContent = yesPercent + '%';
+            document.getElementById('noPercent').textContent = noPercent + '%';
+            
+            document.getElementById('yesBar').style.width = yesPercent + '%';
+            document.getElementById('noBar').style.width = noPercent + '%';
+        }
+
         function vote(choice) {
             fetch('vote.php', {
                 method: 'POST',
@@ -77,8 +154,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('yesCount').textContent = data.yes;
-                document.getElementById('noCount').textContent = data.no;
+                updateResults(data);
                 showResults();
             })
             .catch(error => console.error('Error:', error));
@@ -93,8 +169,7 @@
         fetch('vote.php')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('yesCount').textContent = data.yes;
-                document.getElementById('noCount').textContent = data.no;
+                updateResults(data);
             })
             .catch(error => console.error('Error:', error));
     </script>
